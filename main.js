@@ -19,15 +19,10 @@ function initializeStore() {
 
 // Create the tray icon
 function createTray() {
-  // Create a simple tray icon (1x1 transparent pixel as fallback)
-  const icon = nativeImage.createEmpty();
-  icon.addRepresentation({
-    scaleFactor: 1.0,
-    buffer: Buffer.from(
-      'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAAdgAAAHYBTnsmCAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABXSURBVDiNY2AYBaNgFAxnwPifgYGBgYHh/38GBgYGBobz/1H4DAwM5/8jy5//j64GXQ1MDYo8hgEYBmAYgGHAaA5ANwBdHl0NTM3///8xDECRHwWjYBgDAACNYAff6VjZdQAAAABJRU5ErkJggg==',
-      'base64'
-    )
-  });
+  // Create a simple tray icon - a monitor/display icon
+  const icon = nativeImage.createFromDataURL(
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAAdgAAAHYBTnsmCAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAADeSURBVDiN7ZKxDcIwEEWfHYFEwwhsQEEHaahYgYJCLJGGkjWoqGAdNoBNWIERAqEzn4kTQlAgJN567+3/9/wcM8aQQwBkADpv1wLnGQDEAOoBRAB6AC0Az9sZQB3AfwOwBNB9A1gCWI0BzLxeznnrEMLSWrsaynEcl977rUpSKcl8U9daK+dcqSTz3m+VpC+UMeY1CqC1tlKSlhOAtbYahWLmbZ91HoBNWPg4pdTZ6L6MRkqp825qRH2fUsrMvAvgVcZ5/zqfJ38ZY07TAPacc9FvJ/8f4AMcWEC9/PgF4wAAAABJRU5ErkJggg=='
+  );
   
   tray = new Tray(icon);
   tray.setToolTip('Resolutions - Monitor Resolution Switcher');
