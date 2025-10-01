@@ -1,0 +1,24 @@
+{
+  "name": "resolutions",
+  "version": "1.0.0",
+  "description": "A macOS utility to quickly switch all monitor resolutions from a menu bar app",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --enable-logging",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "electron",
+    "macos",
+    "menu-bar",
+    "resolution",
+    "monitor"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "electron": "^38.2.0",
+    "electron-store": "^8.2.0"
+  }
+}
