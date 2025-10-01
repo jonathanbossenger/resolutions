@@ -174,7 +174,42 @@ function extractDisplayPlacerConfig(output, persistentId) {
  * @param {string} newHeight - New height
  * @returns {string} The displayplacer command
  */
+function isValidId(id) {
+  // Persistent IDs are typically alphanumeric and dashes
+  return typeof id === 'string' && /^[a-zA-Z0-9\-]+$/.test(id);
+}
+
+function isValidResolution(value) {
+  // Width and height should be positive integers
+  return typeof value === 'string' && /^\d+$/.test(value);
+}
+
+function isValidScaling(scaling) {
+  // Only 'on' or 'off' allowed
+  return scaling === 'on' || scaling === 'off';
+}
+
+function isValidOrigin(origin) {
+  // Origin should be in format (number,number)
+  return typeof origin === 'string' && /^\(\d+,\d+\)$/.test(origin);
+}
+
+function isValidDegree(degree) {
+  // Degree should be 0, 90, 180, or 270
+  return typeof degree === 'string' && /^(0|90|180|270)$/.test(degree);
+}
+
 function buildDisplayPlacerCommand(config, newWidth, newHeight) {
+  if (
+    !isValidId(config.id) ||
+    !isValidResolution(newWidth) ||
+    !isValidResolution(newHeight) ||
+    !isValidScaling(config.scaling) ||
+    !isValidOrigin(config.origin) ||
+    !isValidDegree(config.degree)
+  ) {
+    throw new Error('Invalid display configuration values');
+  }
   return `displayplacer "id:${config.id} res:${newWidth}x${newHeight} scaling:${config.scaling} origin:${config.origin} degree:${config.degree}"`;
 }
 
