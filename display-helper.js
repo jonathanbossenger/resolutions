@@ -33,7 +33,7 @@ function parseDisplayPlacerOutput(output) {
   
   for (const line of lines) {
     // Match display ID and persistent ID
-    const displayMatch = line.match(/Persistent screen id:\s*([a-f0-9-]+)/i);
+    const displayMatch = line.match(/Persistent screen id:\s*([A-Fa-f0-9-]+)/);
     if (displayMatch) {
       if (currentDisplay) {
         displays.push(currentDisplay);
