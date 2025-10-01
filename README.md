@@ -87,6 +87,54 @@ The codebase follows these principles:
 - Comprehensive error handling
 - User-friendly error messages
 
+## Building and Releases
+
+### Building Installers Locally
+
+To build installers for distribution:
+
+```bash
+# Install dependencies (including electron-builder)
+npm install
+
+# Build for all architectures (both Intel and Apple Silicon)
+npm run build:mac
+
+# Or build for specific architecture
+npm run build:mac-x64      # Intel Macs
+npm run build:mac-arm64    # Apple Silicon Macs
+```
+
+The installers will be created in the `dist/` directory:
+- `.dmg` files - Disk image installers
+- `.zip` files - Compressed app bundles
+
+### Automated Releases
+
+The project includes a GitHub Actions workflow that automatically builds installers for both Apple Silicon and Intel platforms.
+
+**To create a release:**
+
+1. Tag your commit with a version number:
+   ```bash
+   git tag v1.0.0
+   git push origin v1.0.0
+   ```
+
+2. The workflow will automatically:
+   - Build installers for both x64 (Intel) and arm64 (Apple Silicon)
+   - Create DMG and ZIP files for each architecture
+   - Upload artifacts to the GitHub Actions run
+   - Create a GitHub release with all installers attached
+
+3. Download the appropriate installer for your Mac:
+   - `Resolutions-*-arm64.dmg` for Apple Silicon Macs (M1, M2, M3, etc.)
+   - `Resolutions-*-x64.dmg` for Intel Macs
+
+**Manual workflow trigger:**
+
+You can also manually trigger the build workflow from the Actions tab in GitHub without creating a tag.
+
 ## License
 
 ISC
