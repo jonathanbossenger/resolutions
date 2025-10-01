@@ -6,7 +6,11 @@
   "scripts": {
     "start": "electron .",
     "dev": "electron . --enable-logging",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "electron-builder",
+    "build:mac": "electron-builder --mac",
+    "build:mac-arm64": "electron-builder --mac --arm64",
+    "build:mac-x64": "electron-builder --mac --x64"
   },
   "keywords": [
     "electron",
@@ -20,5 +24,51 @@
   "dependencies": {
     "electron": "^38.2.0",
     "electron-store": "^8.2.0"
+  },
+  "devDependencies": {
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.resolutions.app",
+    "productName": "Resolutions",
+    "mac": {
+      "category": "public.app-category.utilities",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ]
+    },
+    "dmg": {
+      "contents": [
+        {
+          "x": 130,
+          "y": 220
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "files": [
+      "**/*",
+      "!**/*.md",
+      "!.gitignore",
+      "!.github"
+    ]
   }
 }
