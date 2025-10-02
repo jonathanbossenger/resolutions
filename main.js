@@ -13,9 +13,21 @@ function initializeStore() {
     name: 'preferences',
     defaults: {
       savedResolutions: {},
-      resolutionUsageCount: {}
+      resolutionUsageCount: {},
+      launchAtLogin: false
     }
   });
+  
+  // Sync launch at login setting with system
+  const currentSetting = app.getLoginItemSettings().openAtLogin;
+  const storedSetting = store.get('launchAtLogin');
+  
+  // If there's a mismatch, update to match the stored preference
+  if (currentSetting !== storedSetting) {
+    app.setLoginItemSettings({
+      openAtLogin: storedSetting
+    });
+  }
 }
 
 // Create the tray icon
@@ -87,6 +99,12 @@ async function buildMenu() {
         enabled: false
       });
       menuTemplate.push({ type: 'separator' });
+      menuTemplate.push({
+        label: 'Launch at Login',
+        type: 'checkbox',
+        checked: store.get('launchAtLogin'),
+        click: () => toggleLaunchAtLogin()
+      });
       menuTemplate.push({
         label: 'Quit',
         click: () => app.quit()
@@ -189,6 +207,12 @@ async function buildMenu() {
     });
     menuTemplate.push({ type: 'separator' });
     menuTemplate.push({
+      label: 'Launch at Login',
+      type: 'checkbox',
+      checked: store.get('launchAtLogin'),
+      click: () => toggleLaunchAtLogin()
+    });
+    menuTemplate.push({
       label: 'Quit',
       click: () => app.quit()
     });
@@ -208,6 +232,13 @@ async function buildMenu() {
       {
         label: 'Retry',
         click: () => refreshMenu()
+      },
+      { type: 'separator' },
+      {
+        label: 'Launch at Login',
+        type: 'checkbox',
+        checked: store.get('launchAtLogin'),
+        click: () => toggleLaunchAtLogin()
       },
       {
         label: 'Quit',
@@ -318,6 +349,34 @@ async function restorePreferredResolution(persistentId) {
     dialog.showErrorBox(
       'Restore Failed',
       `Failed to restore preferred resolution: ${error.message}`
+    );
+  }
+}
+
+// Toggle launch at login
+function toggleLaunchAtLogin() {
+  try {
+    const currentValue = store.get('launchAtLogin');
+    const newValue = !currentValue;
+    
+    // Update the system setting
+    app.setLoginItemSettings({
+      openAtLogin: newValue
+    });
+    
+    // Store the preference
+    store.set('launchAtLogin', newValue);
+    
+    console.log(`Launch at login ${newValue ? 'enabled' : 'disabled'}`);
+    
+    // Refresh menu to update checkbox
+    refreshMenu();
+    
+  } catch (error) {
+    console.error('Error toggling launch at login:', error);
+    dialog.showErrorBox(
+      'Settings Error',
+      `Failed to update launch at login setting: ${error.message}`
     );
   }
 }

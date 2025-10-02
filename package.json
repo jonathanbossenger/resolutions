@@ -33,6 +33,9 @@
     "productName": "Resolutions",
     "mac": {
       "category": "public.app-category.utilities",
+      "extendInfo": {
+        "LSUIElement": true
+      },
       "target": [
         {
           "target": "dmg",
