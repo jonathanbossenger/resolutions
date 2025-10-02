@@ -38,7 +38,6 @@ jobs:
           name: resolutions-macos-${{ matrix.arch }}
           path: |
             dist/*.dmg
-            dist/*.zip
           retention-days: 90
       
       - name: Release
@@ -47,7 +46,6 @@ jobs:
         with:
           files: |
             dist/*.dmg
-            dist/*.zip
           draft: false
           prerelease: false
         env:
