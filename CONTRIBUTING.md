@@ -5,8 +5,9 @@ Thank you for your interest in contributing to Resolutions!
 ## Development Setup
 
 1. Ensure you have Node.js (v14+) installed
-2. Install displayplacer: `brew install jakehilborn/jakehilborn/displayplacer`
-3. Clone the repository and install dependencies:
+2. Install [Homebrew](https://brew.sh/) (if not already installed)
+3. Install displayplacer: `brew install displayplacer`
+4. Clone the repository and install dependencies:
    ```bash
    git clone https://github.com/jonathanbossenger/resolutions.git
    cd resolutions

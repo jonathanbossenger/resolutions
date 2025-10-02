@@ -83,13 +83,15 @@ Each workflow run produces the following artifacts:
 1. Download the `*-arm64.dmg` file
 2. Open the DMG file
 3. Drag Resolutions to the Applications folder
-4. Install displayplacer: `brew install jakehilborn/jakehilborn/displayplacer`
+4. Install [Homebrew](https://brew.sh/) (if not already installed)
+5. Install displayplacer: `brew install displayplacer`
 
 ### Intel Macs:
 1. Download the `*-x64.dmg` or regular `.dmg` file
 2. Open the DMG file
 3. Drag Resolutions to the Applications folder
-4. Install displayplacer: `brew install jakehilborn/jakehilborn/displayplacer`
+4. Install [Homebrew](https://brew.sh/) (if not already installed)
+5. Install displayplacer: `brew install displayplacer`
 
 ## Troubleshooting
 
