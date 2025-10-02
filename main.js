@@ -95,7 +95,11 @@ async function buildMenu() {
         enabled: false
       });
       menuTemplate.push({
-        label: 'Install with: brew install jakehilborn/jakehilborn/displayplacer',
+        label: 'Install with: brew install displayplacer',
+        enabled: false
+      });
+      menuTemplate.push({
+        label: 'Get Homebrew at: https://brew.sh/',
         enabled: false
       });
       menuTemplate.push({ type: 'separator' });

@@ -4,8 +4,9 @@
 
 1. **Install Prerequisites:**
    ```bash
+   # Install Homebrew (if not already installed): https://brew.sh/
    # Install displayplacer (required)
-   brew install jakehilborn/jakehilborn/displayplacer
+   brew install displayplacer
    ```
 
 2. **Install the Application:**
@@ -51,9 +52,9 @@ When you first run the app, you'll see a new icon in your macOS menu bar. Click 
 ## Troubleshooting
 
 ### "displayplacer not installed" message
-Install displayplacer with Homebrew:
+Install displayplacer with Homebrew (https://brew.sh/):
 ```bash
-brew install jakehilborn/jakehilborn/displayplacer
+brew install displayplacer
 ```
 
 ### Menu doesn't update when I connect/disconnect displays

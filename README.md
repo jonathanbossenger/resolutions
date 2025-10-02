@@ -15,9 +15,10 @@ A macOS utility to quickly switch all monitor resolutions from a menu bar app
 
 - macOS
 - Node.js (v14 or higher)
-- [displayplacer](https://github.com/jakehilborn/displayplacer) - Install with Homebrew:
+- [Homebrew](https://brew.sh/)
+- [displayplacer](https://github.com/jakehilborn/displayplacer) - Install with:
   ```bash
-  brew install jakehilborn/jakehilborn/displayplacer
+  brew install displayplacer
   ```
 
 ## Installation
