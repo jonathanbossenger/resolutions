@@ -12,7 +12,8 @@ function initializeStore() {
   store = new Store({
     name: 'preferences',
     defaults: {
-      savedResolutions: {}
+      savedResolutions: {},
+      resolutionUsageCount: {}
     }
   });
 }
@@ -110,12 +111,26 @@ async function buildMenu() {
         const displayName = display.name || `Display ${index + 1}`;
         const currentRes = display.currentResolution || 'Unknown';
         
-        const resolutionItems = display.resolutions.map(resolution => ({
+        // Get most used resolutions for this display
+        const mostUsedResolutions = getMostUsedResolutions(display.persistentId, 5);
+        
+        // Create resolution items
+        const createResolutionItem = (resolution) => ({
           label: resolution,
           type: 'radio',
           checked: resolution === currentRes,
           click: () => changeResolution(display.persistentId, resolution)
-        }));
+        });
+        
+        // Separate most used from other resolutions
+        const mostUsedItems = mostUsedResolutions
+          .filter(res => display.resolutions.includes(res))
+          .map(createResolutionItem);
+        
+        const otherResolutions = display.resolutions.filter(
+          res => !mostUsedResolutions.includes(res)
+        );
+        const otherResolutionItems = otherResolutions.map(createResolutionItem);
         
         // Add save/restore options
         const savedResolution = store.get(`savedResolutions.${display.persistentId}`);
@@ -127,12 +142,23 @@ async function buildMenu() {
           { type: 'separator' }
         ];
         
-        if (resolutionItems.length > 0) {
+        // Add most used resolutions section if there are any
+        if (mostUsedItems.length > 0) {
+          submenuItems.push({
+            label: 'Most Used Resolutions',
+            enabled: false
+          });
+          submenuItems.push(...mostUsedItems);
+          submenuItems.push({ type: 'separator' });
+        }
+        
+        // Add other available resolutions
+        if (otherResolutionItems.length > 0) {
           submenuItems.push({
             label: 'Available Resolutions',
             enabled: false
           });
-          submenuItems.push(...resolutionItems);
+          submenuItems.push(...otherResolutionItems);
           submenuItems.push({ type: 'separator' });
         }
         
@@ -198,6 +224,9 @@ async function changeResolution(persistentId, resolution) {
   try {
     await displayHelper.setDisplayResolution(persistentId, resolution);
     
+    // Track resolution usage
+    trackResolutionUsage(persistentId, resolution);
+    
     // Refresh menu after a short delay to reflect the change
     setTimeout(() => refreshMenu(), 1000);
     
@@ -207,6 +236,50 @@ async function changeResolution(persistentId, resolution) {
       'Resolution Change Failed',
       `Failed to change resolution: ${error.message}`
     );
+  }
+}
+
+// Track resolution usage for a display
+function trackResolutionUsage(persistentId, resolution) {
+  try {
+    const usageCounts = store.get('resolutionUsageCount') || {};
+    
+    // Initialize display usage if it doesn't exist
+    if (!usageCounts[persistentId]) {
+      usageCounts[persistentId] = {};
+    }
+    
+    // Increment usage count for this resolution
+    if (!usageCounts[persistentId][resolution]) {
+      usageCounts[persistentId][resolution] = 0;
+    }
+    usageCounts[persistentId][resolution]++;
+    
+    store.set('resolutionUsageCount', usageCounts);
+    console.log(`Tracked resolution usage: ${persistentId} - ${resolution} (count: ${usageCounts[persistentId][resolution]})`);
+    
+  } catch (error) {
+    console.error('Error tracking resolution usage:', error);
+    // Don't show error dialog for tracking failures, just log it
+  }
+}
+
+// Get most used resolutions for a display
+function getMostUsedResolutions(persistentId, limit = 5) {
+  try {
+    const usageCounts = store.get('resolutionUsageCount') || {};
+    const displayUsage = usageCounts[persistentId] || {};
+    
+    // Convert to array and sort by usage count (descending)
+    const sortedResolutions = Object.entries(displayUsage)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, limit)
+      .map(entry => entry[0]);
+    
+    return sortedResolutions;
+  } catch (error) {
+    console.error('Error getting most used resolutions:', error);
+    return [];
   }
 }
 
