@@ -1,7 +1,57 @@
 const { exec } = require('child_process');
 const util = require('util');
+const fs = require('fs');
 
 const execPromise = util.promisify(exec);
+
+// Cache for displayplacer path
+let displayPlacerPath = null;
+
+/**
+ * Find the full path to displayplacer executable
+ * Checks common Homebrew installation locations
+ * @returns {Promise<string|null>} Full path to displayplacer or null if not found
+ */
+async function findDisplayPlacerPath() {
+  // Return cached path if available
+  if (displayPlacerPath) {
+    return displayPlacerPath;
+  }
+
+  // Common Homebrew installation paths
+  const possiblePaths = [
+    '/opt/homebrew/bin/displayplacer',  // Apple Silicon
+    '/usr/local/bin/displayplacer',      // Intel
+  ];
+
+  // Check each possible path
+  for (const path of possiblePaths) {
+    try {
+      // Use fs.access to check if file exists and is executable
+      await fs.promises.access(path, fs.constants.X_OK);
+      displayPlacerPath = path;
+      return path;
+    } catch (error) {
+      // File doesn't exist or isn't executable, try next path
+      continue;
+    }
+  }
+
+  // If not found in common paths, try using 'which' as fallback
+  // This will work in development environments
+  try {
+    const { stdout } = await execPromise('which displayplacer');
+    const path = stdout.trim();
+    if (path) {
+      displayPlacerPath = path;
+      return path;
+    }
+  } catch (error) {
+    // 'which' command failed
+  }
+
+  return null;
+}
 
 /**
  * Get all connected displays with their available resolutions
@@ -10,7 +60,11 @@ const execPromise = util.promisify(exec);
  */
 async function getDisplays() {
   try {
-    const { stdout } = await execPromise('displayplacer list');
+    const displayPlacerPath = await findDisplayPlacerPath();
+    if (!displayPlacerPath) {
+      throw new Error('displayplacer not found');
+    }
+    const { stdout } = await execPromise(`${displayPlacerPath} list`);
     const displays = parseDisplayPlacerOutput(stdout);
     return displays;
   } catch (error) {
@@ -94,14 +148,19 @@ function parseDisplayPlacerOutput(output) {
  */
 async function setDisplayResolution(persistentId, resolution) {
   try {
+    const displayPlacerPath = await findDisplayPlacerPath();
+    if (!displayPlacerPath) {
+      throw new Error('displayplacer not found');
+    }
+
     const [width, height] = resolution.split('x');
     
     // Get current display configuration to preserve other settings
-    const { stdout } = await execPromise('displayplacer list');
+    const { stdout } = await execPromise(`${displayPlacerPath} list`);
     const currentConfig = extractDisplayPlacerConfig(stdout, persistentId);
     
     // Build the displayplacer command with new resolution
-    const command = buildDisplayPlacerCommand(currentConfig, width, height);
+    const command = buildDisplayPlacerCommand(currentConfig, width, height, displayPlacerPath);
     
     await execPromise(command);
     console.log(`Successfully set display ${persistentId} to ${resolution}`);
@@ -199,7 +258,7 @@ function isValidDegree(degree) {
   return typeof degree === 'string' && /^(0|90|180|270)$/.test(degree);
 }
 
-function buildDisplayPlacerCommand(config, newWidth, newHeight) {
+function buildDisplayPlacerCommand(config, newWidth, newHeight, displayPlacerPath) {
   if (
     !isValidId(config.id) ||
     !isValidResolution(newWidth) ||
@@ -210,7 +269,7 @@ function buildDisplayPlacerCommand(config, newWidth, newHeight) {
   ) {
     throw new Error('Invalid display configuration values');
   }
-  return `displayplacer "id:${config.id} res:${newWidth}x${newHeight} scaling:${config.scaling} origin:${config.origin} degree:${config.degree}"`;
+  return `${displayPlacerPath} "id:${config.id} res:${newWidth}x${newHeight} scaling:${config.scaling} origin:${config.origin} degree:${config.degree}"`;
 }
 
 /**
@@ -219,8 +278,8 @@ function buildDisplayPlacerCommand(config, newWidth, newHeight) {
  */
 async function checkDisplayPlacerInstalled() {
   try {
-    await execPromise('which displayplacer');
-    return true;
+    const path = await findDisplayPlacerPath();
+    return path !== null;
   } catch (error) {
     return false;
   }
