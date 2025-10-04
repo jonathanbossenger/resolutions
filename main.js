@@ -3,6 +3,8 @@ const path = require('path');
 const Store = require('electron-store');
 const displayHelper = require('./display-helper');
 
+const fs = require('fs');
+
 let tray = null;
 let store = null;
 let isRefreshing = false;
@@ -43,9 +45,28 @@ function getTrayIconPath() {
 
 // Create the tray icon
 function createTray() {
-  // Create icon from SVG file
-  const iconPath = getTrayIconPath();
-  const icon = nativeImage.createFromPath(iconPath);
+  let icon;
+  
+  try {
+    // Try to load the SVG icon file and convert to data URL
+    const iconPath = getTrayIconPath();
+    if (fs.existsSync(iconPath)) {
+      let svgContent = fs.readFileSync(iconPath, 'utf8');
+      // Replace white fill with black for template image
+      svgContent = svgContent.replace(/fill="#ffffff"/g, 'fill="#000000"');
+      const dataUrl = `data:image/svg+xml;base64,${Buffer.from(svgContent).toString('base64')}`;
+      icon = nativeImage.createFromDataURL(dataUrl);
+      console.log('Loaded tray icon from file:', iconPath);
+    } else {
+      // Fallback to emoji icon if file not found
+      console.log('SVG icon file not found at:', iconPath);
+      icon = nativeImage.createFromDataURL(createEmojiIcon('🖥️'));
+    }
+  } catch (error) {
+    // Fallback to emoji icon on error
+    console.error('Error loading SVG icon:', error);
+    icon = nativeImage.createFromDataURL(createEmojiIcon('🖥️'));
+  }
   
   // Mark as template image for proper macOS menu bar rendering
   icon.setTemplateImage(true);
@@ -54,6 +75,19 @@ function createTray() {
   tray.setToolTip('Resolutions - Monitor Resolution Switcher');
   
   buildMenu();
+}
+
+// Create a data URL for an emoji icon
+function createEmojiIcon(emoji) {
+  // Create a canvas to render the emoji
+  const size = 32; // Higher resolution for better quality
+  const canvas = `
+    <svg width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
+      <text x="50%" y="50%" font-size="24" text-anchor="middle" dominant-baseline="central">${emoji}</text>
+    </svg>
+  `;
+  
+  return `data:image/svg+xml;base64,${Buffer.from(canvas).toString('base64')}`;
 }
 
 // Build the tray menu
