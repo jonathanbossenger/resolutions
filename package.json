@@ -33,6 +33,7 @@
     "productName": "Resolutions",
     "mac": {
       "category": "public.app-category.utilities",
+      "icon": "assets/icon.png",
       "extendInfo": {
         "LSUIElement": true
       },
