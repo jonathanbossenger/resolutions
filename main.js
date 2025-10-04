@@ -32,48 +32,15 @@ function initializeStore() {
 
 // Create the tray icon
 function createTray() {
-  // Create a simple 16x16 icon for the menu bar
-  // Using a basic monitor/display icon that will be visible
-  let icon;
+  // Load icon from assets directory
+  const iconPath = path.join(__dirname, 'assets', 'icon.png');
+  let icon = nativeImage.createFromPath(iconPath);
   
-  try {
-    // Try to create from data URL first
-    icon = nativeImage.createFromDataURL(
-      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAAEKSURBVHjarJKxSwJhGMZ/996dioYgDUFDNLREU0M0RFtTRPQPNEVDRH9BU0NDUEQ0RLRE0RBBQzRFQwQN0RQN0VDQ0lBQ3+fwfXKneZYP3vLyvM/7vO/7ymazPCMAPAH8/0EEgHvgFrgCzoEY0A20At1AK9ACNAMBwAs4AAfg/AvABrAKbAObwAqwBswD08AkMAaMAMNAP9APeIAyoAQoAgqBAqAAyP8fQAG8wBWQAM6AI+AQ2Ad2gR1gG9gCNoAEEP8XYBCYAcaBUWAYGAL6gB6gE2gHWoAmoB7wWAB1QC1QDVQClUAF4AeKgUIgDygAXEAO4ASygWwgC8gEMgA78P4gAF+2m7xrhH15AAAAAElFTkSuQmCC'
-    );
-    
-    // Mark as template image for proper macOS menu bar rendering
-    if (icon && !icon.isEmpty()) {
-      icon.setTemplateImage(true);
-    }
-  } catch (error) {
-    console.error('Error creating icon from data URL:', error);
-  }
+  // Resize for menu bar (16x16 for macOS menu bar)
+  icon = icon.resize({ width: 16, height: 16 });
   
-  // Fallback: create a simple icon from buffer if the above failed
-  if (!icon || icon.isEmpty()) {
-    // Create a minimal 16x16 black and white icon
-    const iconSize = 16;
-    const pixels = Buffer.alloc(iconSize * iconSize * 4);
-    
-    // Draw a simple rectangle (monitor shape)
-    for (let y = 4; y < 12; y++) {
-      for (let x = 2; x < 14; x++) {
-        const idx = (y * iconSize + x) * 4;
-        // Set to black (template mode will handle the color)
-        pixels[idx] = 0;     // R
-        pixels[idx + 1] = 0; // G
-        pixels[idx + 2] = 0; // B
-        pixels[idx + 3] = 255; // A (fully opaque)
-      }
-    }
-    
-    icon = nativeImage.createFromBuffer(pixels, {
-      width: iconSize,
-      height: iconSize
-    });
-    icon.setTemplateImage(true);
-  }
+  // Mark as template image for proper macOS menu bar rendering
+  icon.setTemplateImage(true);
   
   tray = new Tray(icon);
   tray.setToolTip('Resolutions - Monitor Resolution Switcher');

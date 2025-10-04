@@ -31,8 +31,10 @@
   "build": {
     "appId": "com.resolutions.app",
     "productName": "Resolutions",
+    "icon": "assets/icon.png",
     "mac": {
       "category": "public.app-category.utilities",
+      "icon": "assets/icon.png",
       "extendInfo": {
         "LSUIElement": true
       },
