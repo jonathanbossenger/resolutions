@@ -4,6 +4,81 @@
 
 This implementation bundles the `displayplacer` binary with the Resolutions app, eliminating the need for users to manually install it via Homebrew.
 
+## Flow Diagram
+
+```
+Development Mode (npm start):
+┌─────────────────────────────────────┐
+│  App starts                         │
+└──────────────┬──────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────┐
+│  Check: ./resources/displayplacer   │
+└──────────────┬──────────────────────┘
+               │
+        ┌──────┴──────┐
+        │             │
+      Found       Not Found
+        │             │
+        ▼             ▼
+    Use it    Check system paths
+                (/opt/homebrew/bin,
+                 /usr/local/bin)
+                      │
+                      ▼
+                  Use system
+                  displayplacer
+
+Production Build (npm run build:mac):
+┌─────────────────────────────────────┐
+│  prebuild script runs               │
+└──────────────┬──────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────┐
+│  Check if on macOS                  │
+└──────────────┬──────────────────────┘
+               │
+        ┌──────┴──────┐
+        │             │
+      macOS       Not macOS
+        │             │
+        ▼             ▼
+┌─────────────┐   Exit OK
+│ Find/copy   │   (CI will
+│ displayplacer│   handle it)
+│ to resources/│
+└──────┬──────┘
+       │
+       ▼
+┌─────────────────────────────────────┐
+│  electron-builder packages app      │
+│  with resources/ as extraResources  │
+└──────────────┬──────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────┐
+│  DMG contains bundled displayplacer │
+└─────────────────────────────────────┘
+
+User Installation:
+┌─────────────────────────────────────┐
+│  User downloads DMG                 │
+└──────────────┬──────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────┐
+│  Installs to /Applications          │
+└──────────────┬──────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────┐
+│  App runs with bundled binary       │
+│  No manual installation needed! ✓   │
+└─────────────────────────────────────┘
+```
+
 ## Changes Made
 
 ### 1. Build Script (`scripts/build-displayplacer.sh`)
@@ -103,3 +178,35 @@ The implementation can be tested in several ways:
 - Consider adding version checking to notify users of updates
 - Could add auto-update for the bundled binary
 - May want to add integrity checks for the bundled binary
+
+## Troubleshooting
+
+### Build fails with "displayplacer not found"
+
+**On macOS:**
+```bash
+brew install displayplacer
+npm run build:mac
+```
+
+**On CI/CD:**
+Ensure the workflow includes the displayplacer installation step (already added in .github/workflows/release.yml)
+
+### Binary not found in production app
+
+Check that:
+1. `resources/displayplacer` exists after build
+2. `extraResources` is configured in package.json
+3. The app is checking the correct path (`process.resourcesPath` in production)
+
+### "Permission denied" when running bundled binary
+
+The build script should set executable permissions. If not, manually:
+```bash
+chmod +x resources/displayplacer
+```
+
+### Different behavior in development vs production
+
+This is expected! Development uses system paths first, production uses bundled binary first. Both modes support fallback to system installation.
+
