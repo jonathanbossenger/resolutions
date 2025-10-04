@@ -30,13 +30,22 @@ function initializeStore() {
   }
 }
 
+// Get the tray icon path
+function getTrayIconPath() {
+  // In production (packaged app), assets are in the app's Resources directory
+  // In development, they're in the assets directory at the project root
+  if (app.isPackaged) {
+    return path.join(process.resourcesPath, 'assets', 'desktop-alt-light.svg');
+  } else {
+    return path.join(__dirname, 'assets', 'desktop-alt-light.svg');
+  }
+}
+
 // Create the tray icon
 function createTray() {
-  // Create icon from emoji 🖥️
-  // Using emoji as the tray icon for macOS menu bar
-  const icon = nativeImage.createFromDataURL(
-    createEmojiIcon('🖥️')
-  );
+  // Create icon from SVG file
+  const iconPath = getTrayIconPath();
+  const icon = nativeImage.createFromPath(iconPath);
   
   // Mark as template image for proper macOS menu bar rendering
   icon.setTemplateImage(true);
@@ -45,19 +54,6 @@ function createTray() {
   tray.setToolTip('Resolutions - Monitor Resolution Switcher');
   
   buildMenu();
-}
-
-// Create a data URL for an emoji icon
-function createEmojiIcon(emoji) {
-  // Create a canvas to render the emoji
-  const size = 32; // Higher resolution for better quality
-  const canvas = `
-    <svg width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
-      <text x="50%" y="50%" font-size="24" text-anchor="middle" dominant-baseline="central">${emoji}</text>
-    </svg>
-  `;
-  
-  return `data:image/svg+xml;base64,${Buffer.from(canvas).toString('base64')}`;
 }
 
 // Build the tray menu
