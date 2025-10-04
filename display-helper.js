@@ -1,6 +1,8 @@
 const { exec } = require('child_process');
 const util = require('util');
 const fs = require('fs');
+const path = require('path');
+const { app } = require('electron');
 
 const execPromise = util.promisify(exec);
 
@@ -8,14 +10,39 @@ const execPromise = util.promisify(exec);
 let displayPlacerPath = null;
 
 /**
+ * Get the bundled displayplacer path
+ * @returns {string} Path to bundled displayplacer binary
+ */
+function getBundledDisplayPlacerPath() {
+  // In production (packaged app), resources are in the app's Resources directory
+  // In development, they're in the resources directory at the project root
+  if (app.isPackaged) {
+    return path.join(process.resourcesPath, 'resources', 'displayplacer');
+  } else {
+    return path.join(__dirname, 'resources', 'displayplacer');
+  }
+}
+
+/**
  * Find the full path to displayplacer executable
- * Checks common Homebrew installation locations
+ * Checks bundled binary first, then common Homebrew installation locations
  * @returns {Promise<string|null>} Full path to displayplacer or null if not found
  */
 async function findDisplayPlacerPath() {
   // Return cached path if available
   if (displayPlacerPath) {
     return displayPlacerPath;
+  }
+
+  // Check for bundled displayplacer first
+  const bundledPath = getBundledDisplayPlacerPath();
+  try {
+    await fs.promises.access(bundledPath, fs.constants.X_OK);
+    displayPlacerPath = bundledPath;
+    console.log('Using bundled displayplacer:', bundledPath);
+    return bundledPath;
+  } catch (error) {
+    console.log('Bundled displayplacer not found, checking system paths...');
   }
 
   // Common Homebrew installation paths

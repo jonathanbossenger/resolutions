@@ -25,14 +25,21 @@ A macOS utility to quickly switch all monitor resolutions from a menu bar app
 ## Prerequisites
 
 - macOS
-- Node.js (v14 or higher)
-- [Homebrew](https://brew.sh/)
-- [displayplacer](https://github.com/jakehilborn/displayplacer) - Install with:
-  ```bash
-  brew install displayplacer
-  ```
+- Node.js (v14 or higher) - Only needed for development
 
 ## Installation
+
+### Using Pre-built Installers (Recommended)
+
+Download the appropriate `.dmg` file for your Mac from the [latest release](https://github.com/jonathanbossenger/resolutions/releases/latest):
+- `Resolutions-*-arm64.dmg` for Apple Silicon Macs (M1, M2, M3, etc.)
+- `Resolutions-*-x64.dmg` for Intel Macs
+
+The app comes with displayplacer bundled, so no additional installation is required.
+
+### Building from Source
+
+### Building from Source
 
 1. Clone the repository:
    ```bash
@@ -40,9 +47,21 @@ A macOS utility to quickly switch all monitor resolutions from a menu bar app
    cd resolutions
    ```
 
-2. Install dependencies:
+2. Install [Homebrew](https://brew.sh/) (if not already installed)
+
+3. Install displayplacer:
+   ```bash
+   brew install displayplacer
+   ```
+
+4. Install dependencies:
    ```bash
    npm install
+   ```
+
+5. Run the application:
+   ```bash
+   npm start
    ```
 
 ## Usage
@@ -85,7 +104,7 @@ The application is modular with clear separation of concerns:
 
 ## How It Works
 
-1. The app uses [displayplacer](https://github.com/jakehilborn/displayplacer) to interact with macOS display APIs
+1. The app bundles [displayplacer](https://github.com/jakehilborn/displayplacer) to interact with macOS display APIs (also supports system-installed versions)
 2. Display information is fetched and parsed when the menu is opened
 3. Resolution changes are applied using displayplacer commands
 4. Electron's `screen` API monitors for display changes and auto-refreshes the menu

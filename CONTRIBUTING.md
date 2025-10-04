@@ -6,13 +6,15 @@ Thank you for your interest in contributing to Resolutions!
 
 1. Ensure you have Node.js (v14+) installed
 2. Install [Homebrew](https://brew.sh/) (if not already installed)
-3. Install displayplacer: `brew install displayplacer`
+3. Install displayplacer: `brew install displayplacer` (required for development)
 4. Clone the repository and install dependencies:
    ```bash
    git clone https://github.com/jonathanbossenger/resolutions.git
    cd resolutions
    npm install
    ```
+
+**Note:** For production builds, displayplacer is automatically bundled with the app, so end users don't need to install it separately.
 
 ## Code Structure
 
@@ -25,9 +27,10 @@ Thank you for your interest in contributing to Resolutions!
 
 ### display-helper.js
 - Modular helper for display-related operations
-- Interfaces with displayplacer CLI tool
+- Interfaces with displayplacer CLI tool (bundled or system-installed)
 - Parses display information
 - Handles resolution switching
+- Automatically detects bundled displayplacer binary in packaged apps
 
 ## Development Workflow
 
@@ -44,7 +47,7 @@ Since this is a macOS-specific app that requires real display hardware:
 - Test with multiple monitors if possible
 - Test with different resolution configurations
 - Test saving and restoring preferences
-- Test error scenarios (displayplacer not installed, etc.)
+- Test both with bundled displayplacer (in production build) and system-installed (in development)
 
 ## Code Style
 
@@ -67,6 +70,5 @@ Since this is a macOS-specific app that requires real display hardware:
 - Add keyboard shortcuts for quick resolution switching
 - Support for color profiles
 - Support for refresh rate selection
-- Built-in displayplacer installation check/helper
 - Remember and auto-apply resolutions per display configuration
 - Support for creating resolution profiles/presets
