@@ -1,5 +1,7 @@
 # resolutions
 
+<img src="https://github.com/jonathanbossenger/resolutions/blob/main/screenshots/app-icon.png" width="48">
+
 A macOS utility to quickly switch all monitor resolutions from a menu bar app
 
 ## Screenshots
