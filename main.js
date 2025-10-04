@@ -32,11 +32,11 @@ function initializeStore() {
 
 // Create the tray icon
 function createTray() {
-  // Create icon from emoji 🖥️
-  // Using emoji as the tray icon for macOS menu bar
-  const icon = nativeImage.createFromDataURL(
-    createEmojiIcon('🖥️')
-  );
+  // Get the path to the tray icon
+  // Electron handles app.asar transparently, so we can use __dirname in both dev and production
+  const iconPath = path.join(__dirname, 'assets', 'tray-icon.png');
+  
+  const icon = nativeImage.createFromPath(iconPath);
   
   // Mark as template image for proper macOS menu bar rendering
   icon.setTemplateImage(true);
@@ -45,19 +45,6 @@ function createTray() {
   tray.setToolTip('Resolutions - Monitor Resolution Switcher');
   
   buildMenu();
-}
-
-// Create a data URL for an emoji icon
-function createEmojiIcon(emoji) {
-  // Create a canvas to render the emoji
-  const size = 32; // Higher resolution for better quality
-  const canvas = `
-    <svg width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
-      <text x="50%" y="50%" font-size="24" text-anchor="middle" dominant-baseline="central">${emoji}</text>
-    </svg>
-  `;
-  
-  return `data:image/svg+xml;base64,${Buffer.from(canvas).toString('base64')}`;
 }
 
 // Build the tray menu
