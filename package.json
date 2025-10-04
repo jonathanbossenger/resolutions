@@ -7,10 +7,11 @@
     "start": "electron .",
     "dev": "electron . --enable-logging",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "electron-builder",
-    "build:mac": "electron-builder --mac",
-    "build:mac-arm64": "electron-builder --mac --arm64",
-    "build:mac-x64": "electron-builder --mac --x64"
+    "prebuild": "bash scripts/build-displayplacer.sh",
+    "build": "npm run prebuild && electron-builder",
+    "build:mac": "npm run prebuild && electron-builder --mac",
+    "build:mac-arm64": "npm run prebuild && electron-builder --mac --arm64",
+    "build:mac-x64": "npm run prebuild && electron-builder --mac --x64"
   },
   "keywords": [
     "electron",
@@ -65,7 +66,15 @@
       "**/*",
       "!**/*.md",
       "!.gitignore",
-      "!.github"
+      "!.github",
+      "!scripts"
+    ],
+    "extraResources": [
+      {
+        "from": "resources",
+        "to": "resources",
+        "filter": ["**/*"]
+      }
     ]
   }
 }

@@ -28,3 +28,6 @@ npm-debug.log*
 
 # User preferences
 preferences.json
+
+# Bundled binaries (generated during build)
+resources/displayplacer

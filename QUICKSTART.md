@@ -2,10 +2,27 @@
 
 ## First Time Setup
 
+### Using Pre-built Installers (Recommended)
+
+1. **Download the Installer:**
+   - Go to the [latest release](https://github.com/jonathanbossenger/resolutions/releases/latest)
+   - Download the appropriate `.dmg` file for your Mac:
+     - `Resolutions-*-arm64.dmg` for Apple Silicon Macs (M1, M2, M3, etc.)
+     - `Resolutions-*-x64.dmg` for Intel Macs
+
+2. **Install the Application:**
+   - Open the downloaded `.dmg` file
+   - Drag the Resolutions app to your Applications folder
+   - Launch the app from Applications
+
+The app comes with displayplacer bundled, so no additional installation is required!
+
+### Building from Source
+
 1. **Install Prerequisites:**
    ```bash
    # Install Homebrew (if not already installed): https://brew.sh/
-   # Install displayplacer (required)
+   # Install displayplacer (required for development)
    brew install displayplacer
    ```
 
@@ -52,10 +69,13 @@ When you first run the app, you'll see a new icon in your macOS menu bar. Click 
 ## Troubleshooting
 
 ### "displayplacer not installed" message
-Install displayplacer with Homebrew (https://brew.sh/):
-```bash
-brew install displayplacer
-```
+If you're using the pre-built installer, this shouldn't happen as displayplacer is bundled with the app. If you see this message:
+- Make sure you're using the official installer from the releases page
+- Try reinstalling the app
+- If developing from source, install displayplacer with Homebrew:
+  ```bash
+  brew install displayplacer
+  ```
 
 ### Menu doesn't update when I connect/disconnect displays
 The menu should auto-refresh, but you can manually refresh by:
