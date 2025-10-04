@@ -10,9 +10,6 @@ A macOS utility to quickly switch all monitor resolutions from a menu bar app
 ### Display Menu with Resolutions
 ![Display Menu](screenshots/Screenshot-02.png)
 
-### Resolution Selection
-![Resolution Selection](screenshots/Screenshot-03.png)
-
 ## Features
 
 - 📺 List all connected monitors in the menu bar
