@@ -42,7 +42,7 @@ This app is not signed, so you might get a warning when you try to open it.
 - You can either overriding the security settings by following the instructions here: https://support.apple.com/en-gb/guide/mac-help/mh40617/15.0/mac/15.0
 - If you are not able to do that, you can remove the quarantine attribute by running the following command in the terminal:
 ```bash
-sudo xattr -d com.apple.quarantine /path/to/WP\ Debug.app
+sudo xattr -d com.apple.quarantine /path/to/Resolutions.app
 ```
 
 ### Building from Source
